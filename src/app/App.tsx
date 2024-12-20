@@ -11,50 +11,50 @@ import Toolbar from '@mui/material/Toolbar';
 import Grid from '@mui/material/Unstable_Grid2';
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {AddItemForm} from "../AddItemForm";
+import {AddItemForm} from "../common/components/AddItemForm";
 import {RootState} from "./store";
-import {MenuButton} from "../MenuButton";
+import {MenuButton} from "../common/components/MenuButton";
 import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from "../model/tasks-reducer";
 import {
-	addTodolistAC,
-	changeTodolistFilterAC,
-	changeTodolistTitleAC,
-	removeTodolistAC
+    addTodolistAC,
+    changeTodolistFilterAC,
+    changeTodolistTitleAC,
+    removeTodolistAC
 } from "../model/todolists-reducer";
-import {Todolist} from "../Todolist";
+import {Todolist} from "../features/todolists/ui/Todolists/Todolist/Todolist";
 import {getTheme} from "../common/theme/theme";
 import {changeThemeAC} from "./app-reducer";
-import {Header} from "../Header";
-import { Main } from '../Main';
+import {Header} from "../common/components/Header";
+import {Main} from './Main';
+import {useAppSelector} from "../common/hooks/useAppSelector";
+import {selectThemeMode} from "./appSelectors";
 
 export type TaskType = {
-	id: string
-	title: string
-	isDone: boolean
+    id: string
+    title: string
+    isDone: boolean
 }
 
 export type FilterValuesType = 'all' | 'active' | 'completed'
 
 export type TodolistType = {
-	id: string
-	title: string
-	filter: FilterValuesType
+    id: string
+    title: string
+    filter: FilterValuesType
 }
 
 export type TasksStateType = {
-	[key: string]: TaskType[]
+    [key: string]: TaskType[]
 }
 
-type ThemeMode = 'dark' | 'light'
-
 export const App = () => {
-	const themeMode = useSelector<RootState, ThemeMode>(state => state.app.themeMode)
-	const theme = getTheme(themeMode)
-	return (
-		<ThemeProvider theme={theme}>
-			<CssBaseline/>
-			<Header/>
-			<Main/>
-		</ThemeProvider>
-	);
+    const themeMode = useAppSelector(selectThemeMode)
+    const theme = getTheme(themeMode)
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline/>
+            <Header/>
+            <Main/>
+        </ThemeProvider>
+    );
 }
