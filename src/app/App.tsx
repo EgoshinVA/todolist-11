@@ -9,7 +9,7 @@ import {createTheme, ThemeProvider} from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Toolbar from '@mui/material/Toolbar';
 import Grid from '@mui/material/Unstable_Grid2';
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AddItemForm} from "../common/components/AddItemForm";
 import {RootState} from "./store";
@@ -28,6 +28,7 @@ import {Header} from "../common/components/Header";
 import {Main} from './Main';
 import {useAppSelector} from "../common/hooks/useAppSelector";
 import {selectThemeMode} from "./appSelectors";
+import {todolistsApi} from "../features/todolists/api/todolists-api";
 
 export type TaskType = {
     id: string
@@ -50,6 +51,7 @@ export type TasksStateType = {
 export const App = () => {
     const themeMode = useAppSelector(selectThemeMode)
     const theme = getTheme(themeMode)
+
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline/>
