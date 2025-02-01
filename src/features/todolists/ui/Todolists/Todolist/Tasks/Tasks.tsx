@@ -3,7 +3,7 @@ import List from "@mui/material/List";
 import {TodolistType} from "../../../../../../app/App";
 import {Task} from "./Task/Task";
 import {useAppSelector} from "../../../../../../common/hooks/useAppSelector";
-import {tasksSelectors} from "../../../../model/tasksSelectors";
+import {selectTasks} from "../../../../model/tasksSlice";
 
 type Props = {
     todolist: TodolistType
@@ -12,7 +12,7 @@ type Props = {
 export const Tasks = (props: Props) => {
     const {id, filter} = props.todolist
 
-    const tasks = useAppSelector(tasksSelectors);
+    const tasks = useAppSelector(selectTasks);
 
     const allTodolistTasks = tasks[id]
     let tasksForTodolist = allTodolistTasks

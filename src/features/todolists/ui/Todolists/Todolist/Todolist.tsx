@@ -1,10 +1,10 @@
-import {AddItemForm} from "../../../../../common/components/AddItemForm";
+import {AddItemForm} from "../../../../../common/components/AddItemForm/AddItemForm";
 import {TodolistType} from "../../../../../app/App";
 import {FilterTasksButtons} from "./FilterTasksButtons/FilterTasksButtons";
 import {TodolistTitle} from "./TodolistTitle/TodolistTitle";
 import {Tasks} from "./Tasks/Tasks";
-import {addTaskAC} from "../../../../../model/tasks-reducer";
 import {useAppDispatch} from "../../../../../common/hooks/useAppDispatch";
+import {addTask} from "../../../model/tasksSlice";
 
 type Props = {
     todolist: TodolistType
@@ -13,14 +13,14 @@ type Props = {
 export const Todolist = ({todolist}: Props) => {
     const dispatch = useAppDispatch();
 
-    const addTask = (title: string) => {
-        dispatch(addTaskAC({title, todolistId: todolist.id}))
+    const addTaskHandler = (title: string) => {
+        dispatch(addTask({title, todolistId: todolist.id}))
     }
 
     return (
         <div>
             <TodolistTitle todolist={todolist}/>
-            <AddItemForm addItem={addTask}/>
+            <AddItemForm addItem={addTaskHandler}/>
             <Tasks todolist={todolist}/>
             <FilterTasksButtons todolist={todolist}/>
         </div>
