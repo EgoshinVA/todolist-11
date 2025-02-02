@@ -53,6 +53,9 @@ const authSlice = createSliceWithThunks({
             }, {
                 fulfilled: (state, action) => {
                     state.isAuth = action.payload
+                },
+                settled: (state) => {
+                    state.isInitialized = true
                 }
             }),
             logout: createAThunk(async (undefined, {dispatch, rejectWithValue}) => {

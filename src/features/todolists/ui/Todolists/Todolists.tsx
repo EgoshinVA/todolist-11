@@ -1,12 +1,18 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Grid from "@mui/material/Unstable_Grid2";
 import Paper from "@mui/material/Paper";
 import {Todolist} from "./Todolist/Todolist";
 import {useAppSelector} from "../../../../common/hooks/useAppSelector";
-import {selectTodolists} from "../../model/todolistsSlice";
+import {fetchTodolists, selectTodolists} from "../../model/todolistsSlice";
+import {useAppDispatch} from "../../../../common/hooks/useAppDispatch";
 
 export const Todolists = () => {
     const todolists = useAppSelector(selectTodolists)
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(fetchTodolists())
+    }, []);
 
     return (
         <div>

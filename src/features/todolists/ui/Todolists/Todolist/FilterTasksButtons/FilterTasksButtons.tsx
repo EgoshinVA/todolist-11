@@ -2,12 +2,11 @@ import React from 'react';
 import {filterButtonsContainerSx} from "../../../../../../Todolist.styles";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import {FilterValuesType, TodolistType} from "../../../../../../app/App";
-import {changeTodolistFilter} from "../../../../model/todolistsSlice";
+import {changeTodolistFilter, DomainTodolist, FilterValuesType} from "../../../../model/todolistsSlice";
 import {useAppDispatch} from "../../../../../../common/hooks/useAppDispatch";
 
 type Props = {
-    todolist: TodolistType
+    todolist: DomainTodolist
 }
 
 export const FilterTasksButtons = (props: Props) => {

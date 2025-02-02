@@ -1,12 +1,12 @@
 import React from 'react';
 import List from "@mui/material/List";
-import {TodolistType} from "../../../../../../app/App";
 import {Task} from "./Task/Task";
 import {useAppSelector} from "../../../../../../common/hooks/useAppSelector";
 import {selectTasks} from "../../../../model/tasksSlice";
+import {DomainTodolist} from "../../../../model/todolistsSlice";
 
 type Props = {
-    todolist: TodolistType
+    todolist: DomainTodolist
 }
 
 export const Tasks = (props: Props) => {

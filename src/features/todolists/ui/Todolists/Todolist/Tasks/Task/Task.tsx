@@ -5,13 +5,14 @@ import {EditableSpan} from "../../../../../../../common/components/EditableSpan/
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ListItem from "@mui/material/ListItem";
-import {TaskType, TodolistType} from "../../../../../../../app/App";
+import {TaskType} from "../../../../../../../app/App";
 import {useAppDispatch} from "../../../../../../../common/hooks/useAppDispatch";
 import {changeTaskStatus, changeTaskTitle, removeTask} from "../../../../../model/tasksSlice";
+import {DomainTodolist} from "../../../../../model/todolistsSlice";
 
 type Props = {
     task: TaskType
-    todolist: TodolistType
+    todolist: DomainTodolist
 }
 
 export const Task = ({todolist, task}: Props) => {

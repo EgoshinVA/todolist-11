@@ -1,11 +1,15 @@
 import {v1} from "uuid";
-import {TasksStateType, TaskType} from '../../../app/App'
 import {addTodolist, removeTodolist} from "./todolistsSlice";
 import {asyncThunkCreator, buildCreateSlice} from "@reduxjs/toolkit";
+import {tasksApi, TaskType} from "../api/tasksApi";
+
+export type TasksStateType = {
+    [key: string]: TaskType[]
+}
 
 const initialState: TasksStateType = {}
 
-const createSliceWithThunks = buildCreateSlice({ creators: { asyncThunk: asyncThunkCreator } })
+const createSliceWithThunks = buildCreateSlice({creators: {asyncThunk: asyncThunkCreator}})
 
 const tasksSlice = createSliceWithThunks({
     name: 'tasks',
@@ -37,7 +41,20 @@ const tasksSlice = createSliceWithThunks({
                 state[action.payload.todolistId] = state[action.payload.todolistId].map(t => t.id === action.payload.taskId ? {
                     ...t, title: action.payload.title
                 } : t)
-            })
+            }),
+            fetchTasks: createAThunk(async (todolistId: string, {dispatch, rejectWithValue}) => {
+                    try {
+                        const res = await tasksApi.getTasks(todolistId)
+                        return {items: res.data.items, todolistId}
+                    } catch (error: any) {
+                        return rejectWithValue(null)
+                    }
+                },
+                {
+                    fulfilled: (state, action) => {
+                        state[action.payload.todolistId] = action.payload.items
+                    }
+                })
         }
     },
     extraReducers: builder => {

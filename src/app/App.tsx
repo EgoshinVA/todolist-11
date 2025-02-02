@@ -8,34 +8,21 @@ import {useAppSelector} from "../common/hooks/useAppSelector";
 import {selectThemeMode} from "./appSlice";
 import {Outlet} from "react-router";
 import {useAppDispatch} from "../common/hooks/useAppDispatch";
-import {authMe} from "../features/auth/model/authSlice";
-
-export type TaskType = {
-    id: string
-    title: string
-    isDone: boolean
-}
-
-export type FilterValuesType = 'all' | 'active' | 'completed'
-
-export type TodolistType = {
-    id: string
-    title: string
-    filter: FilterValuesType
-}
-
-export type TasksStateType = {
-    [key: string]: TaskType[]
-}
+import {authMe, selectIsInitialized} from "../features/auth/model/authSlice";
+import {CircularProgress} from "@mui/material";
 
 export const App = () => {
     const themeMode = useAppSelector(selectThemeMode)
     const theme = getTheme(themeMode)
     const dispatch = useAppDispatch()
+    const isInitialized = useAppSelector(selectIsInitialized)
 
     useEffect(() => {
         dispatch(authMe())
     }, [])
+
+    if (!isInitialized)
+        return <div style={{display: 'flex', justifyContent: 'center'}}><CircularProgress size={150}/></div>
 
     return (
         <ThemeProvider theme={theme}>
