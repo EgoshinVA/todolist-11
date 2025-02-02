@@ -2,8 +2,12 @@ import {asyncThunkCreator, buildCreateSlice} from "@reduxjs/toolkit";
 
 export type ThemeMode = 'dark' | 'light'
 
+export type AppStatus = 'idle' | 'loading' | 'success' | 'rejected'
+
 const initialState = {
     themeMode: 'light' as ThemeMode,
+    status: 'idle' as AppStatus,
+    error: null as null | string,
 }
 
 const createSliceWithThunks = buildCreateSlice({ creators: { asyncThunk: asyncThunkCreator } })

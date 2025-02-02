@@ -1,12 +1,14 @@
 import './App.css';
 import CssBaseline from "@mui/material/CssBaseline";
 import {ThemeProvider} from '@mui/material/styles';
-import React from "react";
+import React, {useEffect} from "react";
 import {getTheme} from "../common/theme/theme";
 import {Header} from "../common/components/Header/Header";
 import {useAppSelector} from "../common/hooks/useAppSelector";
 import {selectThemeMode} from "./appSlice";
 import {Outlet} from "react-router";
+import {useAppDispatch} from "../common/hooks/useAppDispatch";
+import {authMe} from "../features/auth/model/authSlice";
 
 export type TaskType = {
     id: string
@@ -29,6 +31,11 @@ export type TasksStateType = {
 export const App = () => {
     const themeMode = useAppSelector(selectThemeMode)
     const theme = getTheme(themeMode)
+    const dispatch = useAppDispatch()
+
+    useEffect(() => {
+        dispatch(authMe())
+    }, [])
 
     return (
         <ThemeProvider theme={theme}>

@@ -10,6 +10,7 @@ import {useAppSelector} from "../../hooks/useAppSelector";
 import {Link} from "react-router";
 import {Path} from "../../routes/routes";
 import Button from "@mui/material/Button";
+import {logout} from "../../../features/auth/model/authSlice";
 
 export const Header = () => {
     const themeMode = useAppSelector(state => state.app.themeMode)
@@ -29,7 +30,7 @@ export const Header = () => {
                     <Button variant="text" color={'inherit'}>Todolists</Button>
                 </Link>
                 <div>
-                    <MenuButton>Logout</MenuButton>
+                    <MenuButton onClick={() => dispatch(logout())}>Logout</MenuButton>
                     <MenuButton background={theme.palette.primary.dark}>Faq</MenuButton>
                     <Switch color={'default'} onChange={changeModeHandler}/>
                 </div>
