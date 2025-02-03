@@ -1,7 +1,8 @@
-import {v1} from "uuid";
 import {addTodolist, removeTodolist} from "./todolistsSlice";
 import {asyncThunkCreator, buildCreateSlice} from "@reduxjs/toolkit";
-import {tasksApi, TaskType} from "../api/tasksApi";
+import {tasksApi} from "../api/tasksApi";
+import {TaskType} from "../api/tasksApi.types";
+import {ResultCode} from "../../../common/enums/enums";
 
 export type TasksStateType = {
     [key: string]: TaskType[]
@@ -17,17 +18,47 @@ const tasksSlice = createSliceWithThunks({
     reducers: create => {
         const createAThunk = create.asyncThunk.withTypes<{ rejectValue: null }>()
         return {
-            addTask: create.reducer<{ title: string, todolistId: string }>((state, action) => {
-                const newTask: TaskType = {
-                    title: action.payload.title,
-                    isDone: false,
-                    id: v1()
-                }
-                state[action.payload.todolistId].unshift(newTask)
-            }),
-            removeTask: create.reducer<{ taskId: string, todolistId: string }>((state, action) => {
-                state[action.payload.todolistId] = state[action.payload.todolistId].filter(t => t.id !== action.payload.taskId)
-            }),
+            addTask: createAThunk(async (params: { title: string, todolistId: string }, {
+                    dispatch,
+                    rejectWithValue
+                }) => {
+                    try {
+                        const res = await tasksApi.addTask(params)
+                        if (res.data.resultCode === ResultCode.Success) {
+                            return {task: res.data.data.item, todolistId: params.todolistId}
+                        } else {
+                            return rejectWithValue(null)
+                        }
+                    } catch (error: any) {
+                        return rejectWithValue(null)
+                    }
+                },
+                {
+                    fulfilled: (state, action) => {
+                        state[action.payload.todolistId].unshift(action.payload.task)
+                    }
+                }),
+            removeTask: createAThunk(async (params: { taskId: string, todolistId: string }, {
+                    dispatch,
+                    rejectWithValue
+                }) => {
+                    try {
+                        const res = await tasksApi.removeTask(params)
+                        if (res.data.resultCode === ResultCode.Success) {
+                            return params
+                        } else {
+                            return rejectWithValue(null)
+                        }
+                    } catch (error: any) {
+                        return rejectWithValue(null)
+                    }
+                },
+                {
+                    fulfilled: (state, action) => {
+                        state[action.payload.todolistId] = state[action.payload.todolistId].filter(ts => ts.id !== action.payload.taskId)
+
+                    }
+                }),
             changeTaskStatus: create.reducer<{
                 taskId: string,
                 isDone: boolean,
@@ -59,10 +90,10 @@ const tasksSlice = createSliceWithThunks({
     },
     extraReducers: builder => {
         builder
-            .addCase(addTodolist, (state, action) => {
-                return {...state, [action.payload.todolistId]: []}
+            .addCase(addTodolist.fulfilled, (state, action) => {
+                return {...state, [action.payload.id]: []}
             })
-            .addCase(removeTodolist, (state, action) => {
+            .addCase(removeTodolist.fulfilled, (state, action) => {
                 let copyState = {...state}
                 delete copyState[action.payload]
                 return copyState
@@ -73,7 +104,7 @@ const tasksSlice = createSliceWithThunks({
     }
 })
 
-export const {addTask, removeTask, changeTaskStatus, changeTaskTitle} = tasksSlice.actions;
+export const {addTask, removeTask, changeTaskStatus, changeTaskTitle, fetchTasks} = tasksSlice.actions;
 export const {selectTasks} = tasksSlice.selectors;
 
 export default tasksSlice.reducer;

@@ -5,7 +5,6 @@ import Container from "@mui/material/Container";
 import {addTodolist} from "../features/todolists/model/todolistsSlice";
 import {Todolists} from "../features/todolists/ui/Todolists/Todolists";
 import {useAppDispatch} from "../common/hooks/useAppDispatch";
-import {v1} from "uuid";
 import {useAppSelector} from "../common/hooks/useAppSelector";
 import {selectIsAuth} from "../features/auth/model/authSlice";
 import {useNavigate} from "react-router";
@@ -14,7 +13,7 @@ export const Main = () => {
     const dispatch = useAppDispatch()
 
     const addTodolistHandler = (title: string) => {
-        dispatch(addTodolist({title, todolistId: v1()}))
+        dispatch(addTodolist(title))
     }
 
     const isAuth = useAppSelector(selectIsAuth)

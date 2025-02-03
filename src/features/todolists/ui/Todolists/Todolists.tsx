@@ -15,7 +15,7 @@ export const Todolists = () => {
     }, []);
 
     return (
-        <div>
+        <div style={{ display: 'flex' }}>
             {todolists.map((tl) => {
                 return (
                     <Grid key={tl.id}>
