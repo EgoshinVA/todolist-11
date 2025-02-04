@@ -6,7 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ListItem from "@mui/material/ListItem";
 import {useAppDispatch} from "../../../../../../../common/hooks/useAppDispatch";
-import {changeTaskStatus, changeTaskTitle, removeTask} from "../../../../../model/tasksSlice";
+import {updateTask, removeTask} from "../../../../../model/tasksSlice";
 import {DomainTodolist} from "../../../../../model/todolistsSlice";
 
 import {TaskType} from "../../../../../api/tasksApi.types";
@@ -21,11 +21,11 @@ export const Task = ({todolist, task}: Props) => {
     const dispatch = useAppDispatch();
 
     const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        dispatch(changeTaskStatus({taskId: task.id, isDone: e.currentTarget.checked, todolistId: todolist.id}))
+        dispatch(updateTask({taskId: task.id, task: {status: e.currentTarget.checked ? TaskStatus.Completed : TaskStatus.New}, todolistId: todolist.id}))
     }
 
     const updateTaskHandler = (title: string) => {
-        dispatch(changeTaskTitle({taskId: task.id, title, todolistId: todolist.id}))
+        dispatch(updateTask({taskId: task.id, task: {title}, todolistId: todolist.id}))
     }
 
     const removeTaskHandler = () => {

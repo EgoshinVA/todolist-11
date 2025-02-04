@@ -22,18 +22,17 @@ const todolistsSlice = createSliceWithThunks({
         const createAThunk = create.asyncThunk.withTypes<{ rejectValue: null }>()
         return {
             removeTodolist: createAThunk(async (todolistId: string, {dispatch, rejectWithValue}) => {
-                try {
-                    const res = await todolistsApi.removeTodolist(todolistId)
-                    if (res.data.resultCode === ResultCode.Success) {
-                        return todolistId
-                    } else {
+                    try {
+                        const res = await todolistsApi.removeTodolist(todolistId)
+                        if (res.data.resultCode === ResultCode.Success) {
+                            return todolistId
+                        } else {
+                            return rejectWithValue(null)
+                        }
+                    } catch (error: any) {
                         return rejectWithValue(null)
                     }
-                }
-                catch (error: any) {
-                    return rejectWithValue(null)
-                }
-            },
+                },
                 {
                     fulfilled: (state, action) => {
                         return state.filter(tl => tl.id !== action.payload)
@@ -56,9 +55,27 @@ const todolistsSlice = createSliceWithThunks({
                         state.unshift({...action.payload, filter: 'all', entityStatus: 'idle'})
                     }
                 }),
-            changeTodolistTitle: create.reducer<{ id: string, title: string }>((state, action) => {
-                return state.map(tl => tl.id === action.payload.id ? {...tl, title: action.payload.title} : tl)
-            }),
+            changeTodolistTitle: createAThunk(async (params: { todolistId: string, title: string }, {
+                dispatch,
+                rejectWithValue
+            }) => {
+                try {
+                    const res = await todolistsApi.updateTodolist(params)
+                    if (res.data.resultCode === ResultCode.Success) {
+                        return params
+                    } else {
+                        return rejectWithValue(null)
+                    }
+                } catch (error: any) {
+                    return rejectWithValue(null)
+                }
+                },
+                {
+                    fulfilled: (state, action) => {
+                        const todolistId = state.findIndex(tl => tl.id === action.payload.todolistId)
+                        state[todolistId].title = action.payload.title
+                    }
+                }),
             changeTodolistFilter: create.reducer<{ id: string, filter: FilterValuesType }>((state, action) => {
                 return state.map(tl => tl.id === action.payload.id ? {...tl, filter: action.payload.filter} : tl)
             }),

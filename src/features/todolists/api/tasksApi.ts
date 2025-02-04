@@ -1,8 +1,6 @@
 import {instance} from "../../../common/instance/instance";
-import {FetchTasks, TaskType} from "./tasksApi.types";
+import {FetchTasks, TaskType, UpdateTask} from "./tasksApi.types";
 import {BaseResponse} from "../../../common/types/types";
-
-//todo export types for any files
 
 export const tasksApi = {
     getTasks(todolistId: string) {
@@ -16,5 +14,11 @@ export const tasksApi = {
     removeTask(params: { todolistId: string, taskId: string }) {
         const {taskId, todolistId} = params;
         return instance.delete<BaseResponse>(`todo-lists/${todolistId}/tasks/${taskId}`)
+    },
+    updateTask(params: { todolistId: string, taskId: string, task: UpdateTask }) {
+        const {task, taskId, todolistId} = params;
+        return instance.put<BaseResponse<{
+            item: TaskType
+        }>>(`todo-lists/${todolistId}/tasks/${taskId}`, task)
     }
 }

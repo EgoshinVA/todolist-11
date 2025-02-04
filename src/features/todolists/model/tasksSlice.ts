@@ -1,8 +1,9 @@
 import {addTodolist, removeTodolist} from "./todolistsSlice";
 import {asyncThunkCreator, buildCreateSlice} from "@reduxjs/toolkit";
 import {tasksApi} from "../api/tasksApi";
-import {TaskType} from "../api/tasksApi.types";
+import {TaskType, UpdateTask} from "../api/tasksApi.types";
 import {ResultCode} from "../../../common/enums/enums";
+import {RootState} from "../../../app/store";
 
 export type TasksStateType = {
     [key: string]: TaskType[]
@@ -59,20 +60,49 @@ const tasksSlice = createSliceWithThunks({
 
                     }
                 }),
-            changeTaskStatus: create.reducer<{
-                taskId: string,
-                isDone: boolean,
-                todolistId: string
-            }>((state, action) => {
-                state[action.payload.todolistId] = state[action.payload.todolistId].map(t => t.id === action.payload.taskId ? {
-                    ...t, isDone: action.payload.isDone
-                } : t)
-            }),
-            changeTaskTitle: create.reducer<{ taskId: string, title: string, todolistId: string }>((state, action) => {
-                state[action.payload.todolistId] = state[action.payload.todolistId].map(t => t.id === action.payload.taskId ? {
-                    ...t, title: action.payload.title
-                } : t)
-            }),
+            updateTask: createAThunk(async (params: { todolistId: string, taskId: string, task: UpdateTask }, {
+                    dispatch,
+                    getState,
+                    rejectWithValue
+                }) => {
+                    try {
+                        const tasks = (getState() as RootState).tasks
+                        const todoTasks = tasks[params.todolistId]
+                        const task = todoTasks.find(t => t.id === params.taskId)
+
+                        if (!task)
+                            return rejectWithValue(null)
+
+                        const newTask: UpdateTask = {
+                            title: task.title,
+                            status: task.status,
+                            deadline: task.deadline,
+                            description: task.description,
+                            priority: task.priority,
+                            startDate: task.startDate,
+                            ...params.task
+                        }
+
+                        const res = await tasksApi.updateTask({
+                            todolistId: params.todolistId,
+                            taskId: params.taskId,
+                            task: newTask
+                        })
+
+                        if (res.data.resultCode === ResultCode.Success) {
+                            return res.data.data.item
+                        } else {
+                            return rejectWithValue(null)
+                        }
+                    } catch (error: any) {
+                        return rejectWithValue(null)
+                    }
+                },
+                {
+                    fulfilled: (state, action) => {
+                        state[action.payload.todoListId] = state[action.payload.todoListId].map(t => t.id === action.payload.id ? action.payload : t)
+                    }
+                }),
             fetchTasks: createAThunk(async (todolistId: string, {dispatch, rejectWithValue}) => {
                     try {
                         const res = await tasksApi.getTasks(todolistId)
@@ -104,7 +134,7 @@ const tasksSlice = createSliceWithThunks({
     }
 })
 
-export const {addTask, removeTask, changeTaskStatus, changeTaskTitle, fetchTasks} = tasksSlice.actions;
+export const {addTask, removeTask, updateTask, fetchTasks} = tasksSlice.actions;
 export const {selectTasks} = tasksSlice.selectors;
 
 export default tasksSlice.reducer;
