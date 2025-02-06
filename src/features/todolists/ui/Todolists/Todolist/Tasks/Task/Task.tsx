@@ -5,12 +5,10 @@ import {EditableSpan} from "../../../../../../../common/components/EditableSpan/
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ListItem from "@mui/material/ListItem";
-import {useAppDispatch} from "../../../../../../../common/hooks/useAppDispatch";
-import {updateTask, removeTask} from "../../../../../model/tasksSlice";
 import {DomainTodolist} from "../../../../../model/todolistsSlice";
-
-import {TaskType} from "../../../../../api/tasksApi.types";
+import {TaskType, UpdateTask} from "../../../../../api/tasksApi.types";
 import {TaskStatus} from "../../../../../../../common/enums/enums";
+import {useRemoveTaskMutation, useUpdateTaskMutation} from "../../../../../api/tasksApi";
 
 type Props = {
     task: TaskType
@@ -18,18 +16,33 @@ type Props = {
 }
 
 export const Task = ({todolist, task}: Props) => {
-    const dispatch = useAppDispatch();
+    const [removeTask] = useRemoveTaskMutation()
+    const [updateTask] = useUpdateTaskMutation()
+
+    const changeTask = (params: {title?: string, status?: TaskStatus}) => {
+        const {title = task.title, status = task.status} = params;
+        const newTask: UpdateTask = {
+            title,
+            status,
+            deadline: task.deadline,
+            description: task.description,
+            priority: task.priority,
+            startDate: task.startDate
+        }
+        updateTask({taskId: task.id, task: newTask, todolistId: todolist.id})
+    }
 
     const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        dispatch(updateTask({taskId: task.id, task: {status: e.currentTarget.checked ? TaskStatus.Completed : TaskStatus.New}, todolistId: todolist.id}))
+        const status = e.currentTarget.checked ? TaskStatus.Completed : TaskStatus.New
+        changeTask({status})
     }
 
     const updateTaskHandler = (title: string) => {
-        dispatch(updateTask({taskId: task.id, task: {title}, todolistId: todolist.id}))
+        changeTask({title})
     }
 
     const removeTaskHandler = () => {
-        dispatch(removeTask({taskId: task.id, todolistId: todolist.id}))
+        removeTask({taskId: task.id, todolistId: todolist.id})
     }
 
     return (

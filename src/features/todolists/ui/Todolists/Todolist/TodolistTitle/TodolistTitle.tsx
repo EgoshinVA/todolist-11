@@ -2,8 +2,8 @@ import React from 'react';
 import {EditableSpan} from "../../../../../../common/components/EditableSpan/EditableSpan";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {changeTodolistTitle, DomainTodolist, removeTodolist} from "../../../../model/todolistsSlice";
-import {useAppDispatch} from "../../../../../../common/hooks/useAppDispatch";
+import {DomainTodolist} from "../../../../model/todolistsSlice";
+import {useRemoveTodolistMutation, useUpdateTodolistMutation} from "../../../../api/todolistsApi";
 
 type Props = {
     todolist: DomainTodolist
@@ -11,12 +11,15 @@ type Props = {
 
 export const TodolistTitle = (props: Props) => {
     const {title, id} = props.todolist
-    const dispatch = useAppDispatch();
+
+    const [removeTodolist] = useRemoveTodolistMutation()
+    const [updateTodolistTitle] = useUpdateTodolistMutation()
+
     const updateTodolistHandler = (title: string) => {
-        dispatch(changeTodolistTitle({todolistId: id, title}))
+        updateTodolistTitle({todolistId: id, title})
     }
     const removeTodolistHandler = () => {
-        dispatch(removeTodolist(id))
+        removeTodolist(id)
     }
 
     return (

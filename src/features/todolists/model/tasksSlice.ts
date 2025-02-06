@@ -1,9 +1,9 @@
-import {addTodolist, removeTodolist} from "./todolistsSlice";
 import {asyncThunkCreator, buildCreateSlice} from "@reduxjs/toolkit";
-import {tasksApi} from "../api/tasksApi";
+import {_tasksApi} from "../api/tasksApi";
 import {TaskType, UpdateTask} from "../api/tasksApi.types";
 import {ResultCode} from "../../../common/enums/enums";
 import {RootState} from "../../../app/store";
+import {clearAction} from "../../../common/actions/commonActions";
 
 export type TasksStateType = {
     [key: string]: TaskType[]
@@ -24,7 +24,7 @@ const tasksSlice = createSliceWithThunks({
                     rejectWithValue
                 }) => {
                     try {
-                        const res = await tasksApi.addTask(params)
+                        const res = await _tasksApi.addTask(params)
                         if (res.data.resultCode === ResultCode.Success) {
                             return {task: res.data.data.item, todolistId: params.todolistId}
                         } else {
@@ -44,7 +44,7 @@ const tasksSlice = createSliceWithThunks({
                     rejectWithValue
                 }) => {
                     try {
-                        const res = await tasksApi.removeTask(params)
+                        const res = await _tasksApi.removeTask(params)
                         if (res.data.resultCode === ResultCode.Success) {
                             return params
                         } else {
@@ -83,7 +83,7 @@ const tasksSlice = createSliceWithThunks({
                             ...params.task
                         }
 
-                        const res = await tasksApi.updateTask({
+                        const res = await _tasksApi.updateTask({
                             todolistId: params.todolistId,
                             taskId: params.taskId,
                             task: newTask
@@ -105,7 +105,7 @@ const tasksSlice = createSliceWithThunks({
                 }),
             fetchTasks: createAThunk(async (todolistId: string, {dispatch, rejectWithValue}) => {
                     try {
-                        const res = await tasksApi.getTasks(todolistId)
+                        const res = await _tasksApi.getTasks(todolistId)
                         return {items: res.data.items, todolistId}
                     } catch (error: any) {
                         return rejectWithValue(null)
@@ -118,17 +118,12 @@ const tasksSlice = createSliceWithThunks({
                 })
         }
     },
-    extraReducers: builder => {
-        builder
-            .addCase(addTodolist.fulfilled, (state, action) => {
-                return {...state, [action.payload.id]: []}
-            })
-            .addCase(removeTodolist.fulfilled, (state, action) => {
-                let copyState = {...state}
-                delete copyState[action.payload]
-                return copyState
-            })
-    },
+    extraReducers: builder =>
+        builder.addCase(
+            clearAction, (state, action) => {
+                return action.payload.tasks
+            }
+        ),
     selectors: {
         selectTasks: state => state
     }

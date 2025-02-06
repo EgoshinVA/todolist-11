@@ -1,7 +1,7 @@
 import React from "react";
 import AppBar from "@mui/material/AppBar";
 import {getTheme} from "../../theme/theme";
-import {changeTheme} from "../../../app/appSlice";
+import {changeTheme, setIsAuth} from "../../../app/appSlice";
 import {MenuButton} from "../MenuButton/MenuButton";
 import Switch from "@mui/material/Switch";
 import Toolbar from "@mui/material/Toolbar";
@@ -10,17 +10,30 @@ import {useAppSelector} from "../../hooks/useAppSelector";
 import {Link} from "react-router";
 import {Path} from "../../routes/routes";
 import Button from "@mui/material/Button";
-import {logout} from "../../../features/auth/model/authSlice";
+import {useLogoutMutation} from "../../../features/auth/api/authApi";
+import {ResultCode} from "../../enums/enums";
+import {clearAction} from "../../actions/commonActions";
 
 export const Header = () => {
     const themeMode = useAppSelector(state => state.app.themeMode)
 
     const dispatch = useAppDispatch()
+    const [logout] = useLogoutMutation()
 
     const theme = getTheme(themeMode)
 
     const changeModeHandler = () => {
         dispatch(changeTheme(themeMode === 'light' ? 'dark' : 'light'))
+    }
+
+    const logoutHandler = () => {
+        logout().then(res => {
+            if (res.data?.resultCode === ResultCode.Success) {
+                localStorage.removeItem('sn-token')
+                dispatch(setIsAuth(false))
+                dispatch(clearAction())
+            }
+        })
     }
 
     return (
@@ -30,7 +43,7 @@ export const Header = () => {
                     <Button variant="text" color={'inherit'}>Todolists</Button>
                 </Link>
                 <div>
-                    <MenuButton onClick={() => dispatch(logout())}>Logout</MenuButton>
+                    <MenuButton onClick={logoutHandler}>Logout</MenuButton>
                     <MenuButton background={theme.palette.primary.dark}>Faq</MenuButton>
                     <Switch color={'default'} onChange={changeModeHandler}/>
                 </div>

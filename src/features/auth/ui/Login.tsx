@@ -1,13 +1,16 @@
 import React, {useEffect} from 'react';
 import {Controller, SubmitHandler, useForm} from "react-hook-form";
-import {Inputs, login, selectIsAuth} from "../model/authSlice";
 import TextField from "@mui/material/TextField";
 import {Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Grid} from "@mui/material";
 import Button from "@mui/material/Button";
 import s from "./Login.module.css"
-import {useAppDispatch} from "../../../common/hooks/useAppDispatch";
 import {useAppSelector} from "../../../common/hooks/useAppSelector";
 import {useNavigate} from "react-router";
+import {useLoginMutation} from "../api/authApi";
+import {ResultCode} from "../../../common/enums/enums";
+import {useAppDispatch} from "../../../common/hooks/useAppDispatch";
+import {Inputs} from "../api/authApi.types";
+import {selectIsAuth, setIsAuth} from "../../../app/appSlice";
 
 export const Login = () => {
     const {
@@ -21,15 +24,23 @@ export const Login = () => {
     const isAuth = useAppSelector(selectIsAuth)
     const navigate = useNavigate();
 
+    const [login] = useLoginMutation()
+
+    const dispatch = useAppDispatch()
+
     useEffect(() => {
         isAuth && navigate('/')
     }, [isAuth])
 
-    const dispatch = useAppDispatch();
-
     const onSubmit: SubmitHandler<Inputs> = (data) => {
-        dispatch(login(data));
-        reset()
+        login(data).then(res => {
+            if (res.data?.resultCode === ResultCode.Success) {
+                localStorage.setItem('sn-token', res.data.data.token)
+                dispatch(setIsAuth(true))
+            }
+        }).finally(() => {
+            reset()
+        })
     }
 
     return (

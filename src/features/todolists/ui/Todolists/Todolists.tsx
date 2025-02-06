@@ -1,22 +1,15 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import Grid from "@mui/material/Unstable_Grid2";
 import Paper from "@mui/material/Paper";
 import {Todolist} from "./Todolist/Todolist";
-import {useAppSelector} from "../../../../common/hooks/useAppSelector";
-import {fetchTodolists, selectTodolists} from "../../model/todolistsSlice";
-import {useAppDispatch} from "../../../../common/hooks/useAppDispatch";
+import {useFetchTodolistsQuery} from '../../api/todolistsApi';
 
 export const Todolists = () => {
-    const todolists = useAppSelector(selectTodolists)
-    const dispatch = useAppDispatch();
-
-    useEffect(() => {
-        dispatch(fetchTodolists())
-    }, []);
+    const {data} = useFetchTodolistsQuery()
 
     return (
         <div style={{ display: 'flex' }}>
-            {todolists.map((tl) => {
+            {data?.map((tl) => {
                 return (
                     <Grid key={tl.id}>
                         <Paper sx={{p: '0 20px 20px 20px'}}>
