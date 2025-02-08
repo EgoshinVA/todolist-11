@@ -5,10 +5,10 @@ import {EditableSpan} from "../../../../../../../common/components/EditableSpan/
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ListItem from "@mui/material/ListItem";
-import {DomainTodolist} from "../../../../../model/todolistsSlice";
 import {TaskType, UpdateTask} from "../../../../../api/tasksApi.types";
 import {TaskStatus} from "../../../../../../../common/enums/enums";
 import {useRemoveTaskMutation, useUpdateTaskMutation} from "../../../../../api/tasksApi";
+import {DomainTodolist} from "../../../../../api/todolistsApi.types";
 
 type Props = {
     task: TaskType

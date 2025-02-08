@@ -2,8 +2,8 @@ import React from 'react';
 import {EditableSpan} from "../../../../../../common/components/EditableSpan/EditableSpan";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {DomainTodolist} from "../../../../model/todolistsSlice";
 import {useRemoveTodolistMutation, useUpdateTodolistMutation} from "../../../../api/todolistsApi";
+import {DomainTodolist} from "../../../../api/todolistsApi.types";
 
 type Props = {
     todolist: DomainTodolist

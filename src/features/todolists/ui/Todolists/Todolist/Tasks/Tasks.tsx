@@ -1,9 +1,9 @@
 import React from 'react';
 import List from "@mui/material/List";
 import {Task} from "./Task/Task";
-import {DomainTodolist} from "../../../../model/todolistsSlice";
 import {TaskStatus} from "../../../../../../common/enums/enums";
 import {useFetchTasksQuery} from "../../../../api/tasksApi";
+import {DomainTodolist} from "../../../../api/todolistsApi.types";
 
 type Props = {
     todolist: DomainTodolist

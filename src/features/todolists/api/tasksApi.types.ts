@@ -26,3 +26,6 @@ export type UpdateTask = {
     startDate?: string | null
     deadline?: string | null
 }
+export type TasksStateType = {
+    [key: string]: TaskType[]
+}
