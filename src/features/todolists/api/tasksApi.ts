@@ -6,7 +6,7 @@ export const tasksApi = baseApi.injectEndpoints({
     endpoints: build => ({
         fetchTasks: build.query<FetchTasks, string>({
             query: (todolistId) => `todo-lists/${todolistId}/tasks`,
-            providesTags: ['Todolist']
+            providesTags: ['Task']
         }),
         addTask: build.mutation<BaseResponse<{ item: TaskType }>, { todolistId: string, title: string }>({
             query: ({title, todolistId}) => ({
@@ -14,14 +14,14 @@ export const tasksApi = baseApi.injectEndpoints({
                 body: {title},
                 method: 'POST'
             }),
-            invalidatesTags: ['Todolist']
+            invalidatesTags: ['Task']
         }),
         removeTask: build.mutation<BaseResponse, { todolistId: string, taskId: string }>({
             query: ({taskId, todolistId}) => ({
                 url: `todo-lists/${todolistId}/tasks/${taskId}`,
                 method: 'DELETE'
             }),
-            invalidatesTags: ['Todolist']
+            invalidatesTags: ['Task']
         }),
         updateTask: build.mutation<BaseResponse<{ item: TaskType }>, { todolistId: string, taskId: string, task: UpdateTask }>({
             query: ({taskId, task, todolistId}) => ({
@@ -29,7 +29,7 @@ export const tasksApi = baseApi.injectEndpoints({
                 body: task,
                 method: 'PUT'
             }),
-            invalidatesTags: ['Todolist']
+            invalidatesTags: ['Task']
         })
     })
 })
