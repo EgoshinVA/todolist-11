@@ -25,12 +25,16 @@ const appSlice = createSliceWithThunks({
             }),
             setIsAuth: create.reducer<boolean>((state, action) => {
                 state.isAuth = action.payload
+            }),
+            setAppError: create.reducer<{error: string | null}>((state, action) => {
+                state.error = action.payload.error
             })
         }
     },
     selectors: {
         selectThemeMode: state => state.themeMode,
         selectIsAuth: state => state.isAuth,
+        selectStatus: state => state.status,
     },
     extraReducers: builder => {
         builder.addMatcher(isPending, (state, action) => {
@@ -46,7 +50,7 @@ const appSlice = createSliceWithThunks({
     }
 })
 
-export const {changeTheme, setIsAuth} = appSlice.actions;
-export const {selectThemeMode, selectIsAuth} = appSlice.selectors;
+export const {changeTheme, setIsAuth, setAppError} = appSlice.actions;
+export const {selectThemeMode, selectIsAuth, selectStatus} = appSlice.selectors;
 
 export default appSlice.reducer;

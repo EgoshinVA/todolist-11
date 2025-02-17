@@ -1,7 +1,7 @@
 import React from "react";
 import AppBar from "@mui/material/AppBar";
 import {getTheme} from "../../theme/theme";
-import {changeTheme, setIsAuth} from "../../../app/appSlice";
+import {changeTheme, selectStatus, selectThemeMode, setIsAuth} from "../../../app/appSlice";
 import {MenuButton} from "../MenuButton/MenuButton";
 import Switch from "@mui/material/Switch";
 import Toolbar from "@mui/material/Toolbar";
@@ -12,11 +12,11 @@ import {Path} from "../../routes/routes";
 import Button from "@mui/material/Button";
 import {useLogoutMutation} from "../../../features/auth/api/authApi";
 import {ResultCode} from "../../enums/enums";
-import {clearAction} from "../../actions/commonActions";
 import {baseApi} from "../../../app/baseApi";
 
 export const Header = () => {
-    const themeMode = useAppSelector(state => state.app.themeMode)
+    const themeMode = useAppSelector(selectThemeMode)
+    const status = useAppSelector(selectStatus)
 
     const dispatch = useAppDispatch()
     const [logout] = useLogoutMutation()
@@ -49,6 +49,7 @@ export const Header = () => {
                     <Switch color={'default'} onChange={changeModeHandler}/>
                 </div>
             </Toolbar>
+            {status === 'loading' && <div>LOADING</div>}
         </AppBar>
     )
 }

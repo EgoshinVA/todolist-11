@@ -4,6 +4,7 @@ import {Task} from "./Task/Task";
 import {TaskStatus} from "../../../../../../common/enums/enums";
 import {useFetchTasksQuery} from "../../../../api/tasksApi";
 import {DomainTodolist} from "../../../../api/todolistsApi.types";
+import {TasksSkeleton} from "../../../skeletons/TasksSkeleton/TasksSkeleton";
 
 type Props = {
     todolist: DomainTodolist
@@ -12,7 +13,11 @@ type Props = {
 export const Tasks = (props: Props) => {
     const {id, filter} = props.todolist
 
-    const {data} = useFetchTasksQuery(id)
+    const {data, isLoading} = useFetchTasksQuery(id)
+
+    if (isLoading) {
+        return <TasksSkeleton/>
+    }
 
     let tasksForTodolist = data?.items
 

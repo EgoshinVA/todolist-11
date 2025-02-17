@@ -3,9 +3,16 @@ import Grid from "@mui/material/Unstable_Grid2";
 import Paper from "@mui/material/Paper";
 import {Todolist} from "./Todolist/Todolist";
 import {useFetchTodolistsQuery} from '../../api/todolistsApi';
+import {TodolistSkeleton} from "../skeletons/TodolistSkeleton/TodolistSkeleton";
 
 export const Todolists = () => {
-    const {data} = useFetchTodolistsQuery()
+    const {data, isLoading} = useFetchTodolistsQuery()
+
+    if(isLoading){
+        return <>
+            {Array(3).fill(null).map((_) => <TodolistSkeleton/>)}
+        </>
+    }
 
     return (
         <div style={{ display: 'flex' }}>
