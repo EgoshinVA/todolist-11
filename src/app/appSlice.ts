@@ -1,4 +1,6 @@
-import {asyncThunkCreator, buildCreateSlice} from "@reduxjs/toolkit";
+import {asyncThunkCreator, buildCreateSlice, isFulfilled, isPending, isRejected} from "@reduxjs/toolkit";
+import {todolistApi} from "../features/todolists/api/todolistsApi";
+import {tasksApi} from "../features/todolists/api/tasksApi";
 
 export type ThemeMode = 'dark' | 'light'
 
@@ -11,7 +13,7 @@ const initialState = {
     isAuth: false
 }
 
-const createSliceWithThunks = buildCreateSlice({ creators: { asyncThunk: asyncThunkCreator } })
+const createSliceWithThunks = buildCreateSlice({creators: {asyncThunk: asyncThunkCreator}})
 
 const appSlice = createSliceWithThunks({
     name: 'app',
@@ -29,6 +31,18 @@ const appSlice = createSliceWithThunks({
     selectors: {
         selectThemeMode: state => state.themeMode,
         selectIsAuth: state => state.isAuth,
+    },
+    extraReducers: builder => {
+        builder.addMatcher(isPending, (state, action) => {
+            if (todolistApi.endpoints.fetchTodolists.matchPending(action) || tasksApi.endpoints.fetchTasks.matchPending(action)) {
+                return
+            }
+            state.status = 'loading'
+        }).addMatcher(isFulfilled, (state) => {
+            state.status = 'success'
+        }).addMatcher(isRejected, (state) => {
+            state.status = 'rejected'
+        })
     }
 })
 

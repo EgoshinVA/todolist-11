@@ -13,6 +13,7 @@ import Button from "@mui/material/Button";
 import {useLogoutMutation} from "../../../features/auth/api/authApi";
 import {ResultCode} from "../../enums/enums";
 import {clearAction} from "../../actions/commonActions";
+import {baseApi} from "../../../app/baseApi";
 
 export const Header = () => {
     const themeMode = useAppSelector(state => state.app.themeMode)
@@ -31,7 +32,7 @@ export const Header = () => {
             if (res.data?.resultCode === ResultCode.Success) {
                 localStorage.removeItem('sn-token')
                 dispatch(setIsAuth(false))
-                dispatch(clearAction())
+                dispatch(baseApi.util.invalidateTags(["Task", "Todolist"]))
             }
         })
     }
